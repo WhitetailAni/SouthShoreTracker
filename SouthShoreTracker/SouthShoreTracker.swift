@@ -25,7 +25,7 @@ public class SSLTracker: NSObject {
             URLQueryItem(name: "service", value: "get_stops")
         ]
         
-        contactDowntown(components: components) { result in
+        pollIndiana(components: components) { result in
             returnedData = result
             self.semaphore.signal()
         }
@@ -54,7 +54,7 @@ public class SSLTracker: NSObject {
             URLQueryItem(name: "service", value: "get_routes")
         ]
         
-        contactDowntown(components: components) { result in
+        pollIndiana(components: components) { result in
             returnedData = result
             self.semaphore.signal()
         }
@@ -76,7 +76,7 @@ public class SSLTracker: NSObject {
             URLQueryItem(name: "inService", value: "1")
         ]
         
-        contactDowntown(components: components) { result in
+        pollIndiana(components: components) { result in
             returnedData = result
             self.semaphore.signal()
         }
@@ -109,7 +109,7 @@ public class SSLTracker: NSObject {
             URLQueryItem(name: "orderedETAArray", value: "1")
         ]
         
-        contactDowntown(components: components) { result in
+        pollIndiana(components: components) { result in
             returnedData = result
             self.semaphore.signal()
         }
@@ -130,7 +130,10 @@ public class SSLTracker: NSObject {
                 for rawArrival in rawArrivals {
                     if let id = rawArrival["stopID"] as? Int, let track = rawArrival["track"] as? Int, let rawScheduledTime = rawArrival["schedule"] as? String, let rawActualTime = rawArrival["status"] as? String, let minutes = rawArrival["minutes"] as? Int {
                         let scheduledTime = fixTime(time: rawScheduledTime)
-                        let actualTime = fixTime(time: rawActualTime)
+                        var actualTime = scheduledTime
+                        if rawActualTime != "On Time" {
+                            actualTime = fixTime(time: rawActualTime)
+                        }
                         
                         brray.append(SSLArrival(stop: SSLStop.getStopForId(id: id, stops: self.getStops()), scheduledArrivalTime: scheduledTime, actualArrivalTime: actualTime, minutesTilArrival: minutes, track: track, trainNumber: trainNumber))
                     }
@@ -152,7 +155,7 @@ public class SSLTracker: NSObject {
             URLQueryItem(name: "stopID", value: String(id))
         ]
         
-        contactDowntown(components: components) { result in
+        pollIndiana(components: components) { result in
             returnedData = result
             self.semaphore.signal()
         }
@@ -181,7 +184,7 @@ public class SSLTracker: NSObject {
             URLQueryItem(name: "service", value: "get_service_announcements")
         ]
         
-        contactDowntown(components: components) { result in
+        pollIndiana(components: components) { result in
             returnedData = result
             self.semaphore.signal()
         }
@@ -195,11 +198,12 @@ public class SSLTracker: NSObject {
     private func fixTime(time: String) -> String {
         let inputFormatter = DateFormatter()
         inputFormatter.dateFormat = "HH:mma"
+        inputFormatter.timeZone = TimeZone.autoupdatingCurrent
         let date = inputFormatter.date(from: time)
         
         let outputFormatter = DateFormatter()
         outputFormatter.dateFormat = "HH:mm"
-        outputFormatter.timeZone = TimeZone.autoupdatingCurrent
+        outputFormatter.timeZone = TimeZone.init(secondsFromGMT: 0)
         
         return outputFormatter.string(from: date ?? Date(timeIntervalSince1970: 0))
     }
@@ -247,7 +251,7 @@ public class SSLTracker: NSObject {
     }
 
     
-    private func contactDowntown(components: URLComponents?, completion: @escaping ([String: Any]) -> Void) {
+    private func pollIndiana(components: URLComponents?, completion: @escaping ([String: Any]) -> Void) {
         var conponents = components
         conponents?.queryItems?.append(URLQueryItem(name: "token", value: key))
         
