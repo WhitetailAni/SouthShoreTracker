@@ -24,9 +24,10 @@ public struct SSLStop {
     
     public static func getEndStopIdForTrain(trainNumber: String) -> Int {
         let number = Int(trainNumber) ?? 000
-        if [400, 430, 432, 952, 954, 956].contains(number) || isNumberBetween(min: 600, max: 699, value: number) || isNumberBetween(min: 100, max: 199, value: number) {
+        let even = number % 2 == 0
+        if [400, 430, 432, 952, 954, 956].contains(number) || ((isNumberBetween(min: 600, max: 699, value: number) || isNumberBetween(min: 100, max: 199, value: number)) && !even) {
             return 17
-        } else if number % 2 == 0 {
+        } else if even {
             return 1
         } else if isNumberBetween(min: 400, max: 599, value: number) || number < 100 {
             return 19
