@@ -46,7 +46,7 @@ public class SSLTracker: NSObject {
         return stops
     }
     
-    public func getOverlay() -> MKPolyline {
+    public func getOverlay(endStop: SSLStop?, trainString: String) -> MKPolyline {
         var returnedData: [String: Any] = [:]
         var components = URLComponents(string: baseURL)
          
@@ -62,9 +62,25 @@ public class SSLTracker: NSObject {
         
         let rawData = returnedData["get_routes"] as? [[String: Any]] ?? []
         let encline = rawData[0]["encLine"] as? String ?? ""
-        let bigArray = self.deCode(polyline: encline)
+        let array = self.deCode(polyline: encline)
         
-        return MKPolyline(coordinates: bigArray, count: bigArray.count)
+        if let stop = endStop {
+            guard let filePath = Bundle(for: type(of: self)).path(forResource: "limits", ofType: "plist") else {
+                return MKPolyline(coordinates: array, count: array.count)
+            }
+            
+            let limitDict = NSDictionary(contentsOfFile: filePath) as? [String: Int] ?? [:]
+            
+            let trainNumber = Int(trainString) ?? 000
+            if [401, 403, 405, 701].contains(trainNumber) {
+                let brray = Array(array[301...array.count])
+                return MKPolyline(coordinates: brray, count: brray.count)
+            }
+            let limit = limitDict[stop.name] ?? array.count - 1
+            let brray = Array(array[0...limit])
+            return MKPolyline(coordinates: brray, count: brray.count)
+        }
+        return MKPolyline(coordinates: array, count: array.count)
     }
     
     public func getVehicles() -> [SSLVehicle] {
@@ -196,14 +212,23 @@ public class SSLTracker: NSObject {
     }
     
     private func fixTime(time: String) -> String {
+        let latin = time.suffix(2)
+        let timeRaw = time.prefix(5).split { ":" .contains($0) }
+        var hour = Int(timeRaw[0]) ?? 0
+        let minute = Int(timeRaw[1]) ?? 0
+        if latin == "PM" {
+            hour += 12
+        }
+        let twoTime = "\(hour):\(minute)"
         let inputFormatter = DateFormatter()
-        inputFormatter.dateFormat = "HH:mma"
-        inputFormatter.timeZone = TimeZone.autoupdatingCurrent
-        let date = inputFormatter.date(from: time)
+        inputFormatter.dateFormat = "HH:mm"
+        inputFormatter.timeZone = TimeZone.init(secondsFromGMT: 0)
+        let date = inputFormatter.date(from: twoTime)
         
         let outputFormatter = DateFormatter()
         outputFormatter.dateFormat = "HH:mm"
         outputFormatter.timeZone = TimeZone.init(secondsFromGMT: 0)
+    
         
         return outputFormatter.string(from: date ?? Date(timeIntervalSince1970: 0))
     }

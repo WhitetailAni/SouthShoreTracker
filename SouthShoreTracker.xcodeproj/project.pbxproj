@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		42549F772D9CBD28005C8B27 /* limits.plist in Resources */ = {isa = PBXBuildFile; fileRef = 42549F762D9CBD28005C8B27 /* limits.plist */; };
 		42F0BC012D26840300F834DF /* SouthShoreTracker.h in Headers */ = {isa = PBXBuildFile; fileRef = 42F0BBFE2D26840300F834DF /* SouthShoreTracker.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		42F0BC022D26840300F834DF /* SouthShoreTracker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 42F0BBFF2D26840300F834DF /* SouthShoreTracker.swift */; };
 		42F0BC052D26840B00F834DF /* SSLStop.swift in Sources */ = {isa = PBXBuildFile; fileRef = 42F0BC042D26840A00F834DF /* SSLStop.swift */; };
@@ -16,6 +17,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		42549F762D9CBD28005C8B27 /* limits.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = limits.plist; sourceTree = "<group>"; };
 		42F0BBE72D26811700F834DF /* SouthShoreTracker.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = SouthShoreTracker.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		42F0BBFE2D26840300F834DF /* SouthShoreTracker.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SouthShoreTracker.h; sourceTree = "<group>"; };
 		42F0BBFF2D26840300F834DF /* SouthShoreTracker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SouthShoreTracker.swift; sourceTree = "<group>"; };
@@ -39,6 +41,7 @@
 		42F0BBDD2D26811700F834DF = {
 			isa = PBXGroup;
 			children = (
+				42549F762D9CBD28005C8B27 /* limits.plist */,
 				42F0BC002D26840300F834DF /* SouthShoreTracker */,
 				42F0BBE82D26811700F834DF /* Products */,
 			);
@@ -146,6 +149,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				42549F772D9CBD28005C8B27 /* limits.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
